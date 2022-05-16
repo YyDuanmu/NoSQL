@@ -1,0 +1,9 @@
+Question 1
+
+Find list of distinct (that is do not repeat same name) directors in DB - movies/Neo4j Sandbox
+
+MATCH (p:Person)-[:DIRECTED]-(m:Movie) RETURN DISTINCT p.name
+
+Find list of distinct (that is do not repeat same name) actors in DB - movies/Neo4j Sandbox
+
+MATCH (p:Person)-[:ACTED_IN]-(m:Movie) RETURN DISTINCT p.name

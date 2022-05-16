@@ -1,0 +1,39 @@
+// Method 1:
+db.persons.aggregate([
+    { 
+      $unwind: "$language" 
+    },
+    { 
+      $group: { 
+        _id: null, 
+        language: { $addToSet: "$language" }
+      }
+    },
+    { 
+      $unwind: "$language" 
+    },
+    { 
+      $sort: { "language":1 }
+    },
+    { 
+      $project: { _id: 0 }
+    },
+])
+// Method 2:
+db.persons.aggregate([
+    { 
+      $unwind: "$language" 
+    },
+    { 
+      $group: { 
+        _id: "$language", 
+        language: { $first: "$language" }
+      }
+    },
+    { 
+      $sort: { "language":1 }
+    },
+    { 
+      $project: { _id: 0 }
+    },
+])

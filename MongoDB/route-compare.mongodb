@@ -1,0 +1,69 @@
+use("sample_training");
+
+// Answer: The most frequently flown route is ORD-ATL.
+
+// Solution 1: Union with collection itself by creating a new collection
+db.routes.aggregate([
+    { $project: {
+        src_airport:"$dst_airport",
+        dst_airport:"$src_airport"
+    }},
+    { $match: {} }, 
+    { $out: "routes2" }
+])
+
+db.routes.aggregate([
+  {
+    $unionWith: {
+      coll: 'routes2'
+    }
+  },
+  {
+    $group:{
+      _id:{
+      src_airport:"$src_airport",
+      dst_airport:"$dst_airport"
+    },
+    count:{$sum:1}}
+  },
+  {
+    $sort:{
+      count:-1
+    }
+  }
+])
+
+// Solution 2: Use $cmp and $cond
+db.routes.aggregate([
+    {
+        $project:{
+            route_1: {$cmp:["$src_airport","$dst_airport"]},
+            src_airport:{$toString: "$src_airport"},
+            dst_airport:{$toString: "$dst_airport"}
+        }
+    },
+    {
+        $project:{
+            route:{
+                $cond:{
+                    if: {$eq:["$route_1",1]},
+                    then: {$concat:["$src_airport","-","$dst_airport"]},
+                    else: {$concat:["$dst_airport","-","$src_airport"]}
+                }
+            }
+        }
+    },
+    {
+        $group:{
+            _id:{
+                route:"$route"
+            },
+            count:{$sum:1}
+        }
+    },
+    {
+        $sort:{
+            count:-1
+        }
+    }
+])

@@ -1,0 +1,31 @@
+use("HW4");
+db.orders.drop()
+db.orders.insertMany( [
+{ _id: 0, productName: "Steel beam", status: "new", quantity: 10 },
+{ _id: 1, productName: "Steel beam", status: "urgent", quantity: 20 },
+{ _id: 2, productName: "Steel beam", status: "urgent", quantity: 30 },
+{ _id: 3, productName: "Iron rod", status: "new", quantity: 15 },
+{ _id: 4, productName: "Iron rod", status: "urgent", quantity: 50 },
+{ _id: 5, productName: "Iron rod", status: "urgent", quantity: 10 }
+] )
+
+// Let us assume we always want to filter by productName and see only productName and status in the output.
+// Can you show what a sample query would look like?
+db.orders.find({productName:"Steel beam", status:"new"},{_id:0,productName:1,status:1})
+// .explain("executionStats")
+
+// What kind of index would you advise for the fastest query response? Create it.
+// I suggest creating a compound index of {productName:1,status:1}.
+db.orders.createIndex({productName:1,status:1})
+db.orders.getIndexes()
+
+// What is the index size?
+db.orders.stats()
+// IndexSize: 
+// productName_1_status_1: 20480
+
+// Why do you think this index will be the fastest?
+// Scanning an index is much faster than scanning a collection, so index is necessary.
+// Because we only want to filter by productName and see only productName and status, 
+// the best choice of creating index is a compound index of {productName:1,status:1}.
+// This compound index can fit entirely in RAM and make query execute fast.

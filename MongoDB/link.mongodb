@@ -1,0 +1,163 @@
+use("HW2");
+
+db.Customer.drop()
+db.Order.drop()
+
+db.createCollection("Customer",{
+    validator:{
+        $jsonSchema:{
+            bsonType:"object",
+            required:["customer_numb","customer_first_name","customer_last_name","customer_street","customer_city","customer_state","customer_zip","customer_phone"],
+            properties:{
+                customer_numb:{
+                    bsonType:"int"
+                },
+                customer_first_name:{
+                    bsonType:"string"
+                },
+                customer_last_name:{
+                    bsonType:"string"
+                },
+                customer_street:{
+                    bsonType:"string"
+                },
+                customer_city:{
+                    bsonType:"string"
+                },
+                customer_state:{
+                    bsonType:"string"
+                },
+                customer_zip:{
+                    bsonType:"string"
+                },
+                customer_phone:{
+                    bsonType:"string"
+                }
+            }
+        }
+    }
+})
+
+db.createCollection("Order",{
+    validator:{
+        $jsonSchema:{
+            bsonType:"object",
+            required:["order_numb","customer_numb","order_date","credit_card_numb","credit_card_exp_date","order_complete","pickup_or_ship"],
+            properties:{
+                order_numb:{
+                    bsonType:"int"
+                },
+                customer_numb:{
+                    bsonType:"int"
+                },
+                order_date:{
+                    bsonType:"date"
+                },
+                credit_card_numb:{
+                    bsonType:"string"
+                },
+                credit_card_exp_date:{
+                    bsonType:"string"
+                },
+                order_complete:{
+                    bsonType:"bool"
+                },
+                pickup_or_ship:{
+                    bsonType:"string"
+                }
+            }
+        }
+    }
+})
+
+db.Customer.insertMany([
+    {
+        customer_numb:NumberInt(1),
+        customer_first_name:"Yiyang",
+        customer_last_name:"Duanmu",
+        customer_street:"3335 S Figueroa ST",
+        customer_city:"Los Angeles",
+        customer_state:"CA",
+        customer_zip:"90007",
+        customer_phone:"2135129368"
+    },
+    {
+        customer_numb:NumberInt(2),
+        customer_first_name:"Liam",
+        customer_last_name:"DM",
+        customer_street:"111 Hope ST",
+        customer_city:"Los Angeles",
+        customer_state:"CA",
+        customer_zip:"91100",
+        customer_phone:"1234444556"
+    }
+])
+
+db.Order.insertMany([
+    {
+        order_numb:NumberInt(1),
+        customer_numb:NumberInt(1),
+        order_date:ISODate("2020-02-10T21:11:23.059Z"),
+        credit_card_numb:"6666666666666666",
+        credit_card_exp_date:"01/29",
+        order_complete:true,
+        pickup_or_ship:"pickup"
+    },
+    {
+        order_numb:NumberInt(2),
+        customer_numb:NumberInt(1),
+        order_date:ISODate("2020-03-10T21:11:23.059Z"),
+        credit_card_numb:"6666666666666666",
+        credit_card_exp_date:"01/29",
+        order_complete:true,
+        pickup_or_ship:"ship"
+    },
+    {
+        order_numb:NumberInt(3),
+        customer_numb:NumberInt(1),
+        order_date:ISODate("2020-04-10T21:11:23.059Z"),
+        credit_card_numb:"6666666666666666",
+        credit_card_exp_date:"01/29",
+        order_complete:true,
+        pickup_or_ship:"pickup"
+    },
+    {
+        order_numb:NumberInt(4),
+        customer_numb:NumberInt(2),
+        order_date:ISODate("2020-02-10T22:11:23.059Z"),
+        credit_card_numb:"8888888888888888",
+        credit_card_exp_date:"07/29",
+        order_complete:true,
+        pickup_or_ship:"ship"
+    },
+    {
+        order_numb:NumberInt(5),
+        customer_numb:NumberInt(2),
+        order_date:ISODate("2020-03-10T22:11:23.059Z"),
+        credit_card_numb:"8888888888888888",
+        credit_card_exp_date:"07/29",
+        order_complete:true,
+        pickup_or_ship:"ship"
+    },
+    {
+        order_numb:NumberInt(6),
+        customer_numb:NumberInt(2),
+        order_date:ISODate("2020-04-10T22:11:23.059Z"),
+        credit_card_numb:"8888888888888888",
+        credit_card_exp_date:"07/29",
+        order_complete:true,
+        pickup_or_ship:"pickup"
+    }
+])
+
+db.Customer.aggregate([
+    {
+        $lookup:{
+            from:"Order",
+            localField:"customer_numb",
+            foreignField:"customer_numb",
+            as:"order"
+        }
+    }
+])
+

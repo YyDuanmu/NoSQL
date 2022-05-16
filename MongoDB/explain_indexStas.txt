@@ -1,0 +1,28 @@
+Look at this indexStats below:
+db.orders.aggregate( [ { $indexStats: { } } ] )
+[
+{
+name: 'productName_1_status_1',
+key: { productName: 1, status: 1 },
+accesses: { ops: Long("4"), since: ISODate("2022-02-16T17:57:53.039Z") },
+host: 'cluster0-shard-00-02.cmtcy.mongodb.net:27017'
+},
+{
+name: '_id_',
+key: { _id: 1 },
+accesses: { ops: Long("1"), since: ISODate("2022-02-16T17:57:53.039Z") },
+host: 'cluster0-shard-00-02.cmtcy.mongodb.net:27017'
+}
+]
+
+1.	What is the name of the collection in which indexStats is being run
+
+The name of the collection in which indexStats is being run is orders.
+
+2.	How many indexes does it have? What are the columns on which the indexes are created (answer per index basis)?
+
+This collection has 2 indexes. '_id_' is created based on '_id' which may be the default index and another index 'productName_1_status_1' is created based on the combination of 'productName' and 'status'.
+
+3.	Have the indexes ever been used? If so, how many times?
+
+Yes. the 'ops' in the accesses statement means the number of operations that used the index. Therefore, '_id_' has been used once and 'productName_1_status_1' has been used 4 times.

@@ -1,0 +1,5 @@
+(Sharding) —— 1. If your data volume, read load, or write load grows bigger than a single machine can handle, you can potentially spread the load across multiple machines. 
+(Replication) —— 2. If your application needs to continue working even if one machine (or several machines, or the network, or an entire data center) goes down, you can use multiple machines to give you redundancy. When one fails, another one can take over.
+(Data Warehouse) —— 3. A subject-oriented, integrated, time-variant, nonvolatile collection of data supporting decision-making (Business Intelligence, Analytics, etc)
+(Transaction) —— 4. A collection of several operations on the database is considered a unit. They must succeed or roll back as a unit.
+(Data Lake) —— 5. A centralized repository that allows you to store all your structured and unstructured data at any scale. This also requires governance, security and other data management.

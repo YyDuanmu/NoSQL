@@ -1,0 +1,25 @@
+use('HW4');
+
+db.widgetSales.aggregate([
+  {
+    $project:{
+      date:"$date",
+      totalSales:{
+        $multiply:["$unitPrice","$quantity"]
+      }
+    }
+  },
+  {
+    $group: {
+      _id:{
+        $dateToString: { format: "%Y-%m", date: "$date"}
+      },
+      monthlySales:{
+        $sum:"$totalSales"
+      }
+    }
+  },
+  {
+    $merge: { into: "widgetSalesMonthlyAgg", whenMatched: "replace" }
+  }
+])

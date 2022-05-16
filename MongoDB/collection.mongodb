@@ -1,0 +1,185 @@
+use("HW2"),
+
+db.student.drop()
+
+db.createCollection("student",{
+  validator:{
+    $jsonSchema:{
+      bsonType:"object",
+      required:["student_info","home_address","contact_phone_number"],
+      properties:{
+        student_id:{
+            bsonType:"object",
+            required:["student_name","student_id"],
+            properties:{
+                student_name:{
+                    bsonType:"string"
+                },
+                student_id:{
+                    bsonType:"int"
+                }
+            }
+        },
+        home_address:{
+          bsonType:"object",
+          required:["address","zipcode"],
+          properties:{
+              address:{
+                  bsonType:"string"
+              },
+              zipcode:{
+                  bsonType:"string"
+              }
+          }
+        },
+        contact_phone_number:{
+          bsonType:"string"
+        }
+      }
+    }
+  }
+})
+
+
+// 4. create 10 records
+
+db.student.insertMany([
+    {
+        student_info:{
+            student_name:"Allan",
+            student_id:NumberInt(20220001)
+        },
+        home_address:{
+            address:"8913 Tailwater Drive Los Angeles, CA",
+            zipcode:"90022"
+        },
+        contact_phone_number:"213-1111-111"
+    },
+    {
+        student_info:{
+            student_name:"Bob",
+            student_id:NumberInt(20220002)
+        },
+        home_address:{
+            address:"86 Catherine Rd. Los Angeles, CA",
+            zipcode:"90022"
+        },
+        contact_phone_number:"213-2222-222"
+    },
+    {
+        student_info:{
+            student_name:"Carina",
+            student_id:NumberInt(20220003)
+        },
+        home_address:{
+            address:"70 Saxton Street Folsom, CA",
+            zipcode:"95630"
+        },
+        contact_phone_number:"333-3333-333"
+    },
+    {
+        student_info:{
+            student_name:"David",
+            student_id:NumberInt(20220004)
+        },
+        home_address:{
+            address:"6 Fawn Avenue San Jose, CA",
+            zipcode:"95123"
+        },
+        contact_phone_number:"444-4444-444"
+    },
+    {
+        student_info:{
+            student_name:"Eric",
+            student_id:NumberInt(20220005)
+        },
+        home_address:{
+            address:"9274 Old York St. San Jose, CA",
+            zipcode:"95122"
+        },
+        contact_phone_number:"555-5555-555"
+    },
+    {
+        student_info:{
+            student_name:"Freda",
+            student_id:NumberInt(20220006)
+        },
+        home_address:{
+            address:"8195 Brandywine St. Los Angeles, CA",
+            zipcode:"90063"
+        },
+        contact_phone_number:"213-6666-666"
+    },
+    {
+        student_info:{
+            student_name:"Grace",
+            student_id:NumberInt(20220007)
+        },
+        home_address:{
+            address:"649 Foxrun Street Los Angeles, CA",
+            zipcode:"90022"
+        },
+        contact_phone_number:"213-7777-777"
+    },
+    {
+        student_info:{
+            student_name:"Helen",
+            student_id:NumberInt(20220008)
+        },
+        home_address:{
+            address:"9581 Broad St. Oakland, CA",
+            zipcode:"94601"
+        },
+        contact_phone_number:"888-888-8888"
+    },
+    {
+        student_info:{
+            student_name:"Ian",
+            student_id:NumberInt(20220009)
+        },
+        home_address:{
+            address:"955 E. Dunbar Lane Santee, CA",
+            zipcode:"92071"
+        },
+        contact_phone_number:"999-9999-999"
+    },
+    {
+        student_info:{
+            student_name:"Jane",
+            student_id:NumberInt(20220010)
+        },
+        home_address:{
+            address:"158 Columbia St. Daly City, CA",
+            zipcode:"94015"
+        },
+        contact_phone_number:"000-00000-000"
+    }
+])
+
+
+// 5. Recommend Index
+// I recommend using both contact phone number and zipcode as index 
+// because these two parameters are selective and we can find certain records efficiently
+// if we use two specific values of phone number and zipcode.
+
+
+// 6.1 Create Index - contact_phone_number
+db.student.createIndex({"contact_phone_number":1})
+// 7.1 Using a contact phone number to search
+db.student.find({"contact_phone_number": "213-7777-777" })
+// 8.1 Proof indexes that are being used
+db.student.explain("executionStats").find({"contact_phone_number": "213-7777-777"})
+// Results: 
+// stage: "FETCH"
+// inputStage: {stage: "IXSCAN"}
+
+
+// 6.2 Create Index - zipcode
+db.student.createIndex({"home_address.zipcode":1})
+// 7.2 Using zip code of the home address to search
+db.student.find({"home_address.zipcode": { $regex: /90022/ } })
+// 8.1 Proof indexes that are being used
+db.student.explain("executionStats").find({"home_address.zipcode": { $regex: /90022/ } })
+// Results: 
+// stage: "FETCH"
+// inputStage: {stage: "IXSCAN"}
